@@ -8,7 +8,7 @@ Routes calculated by [OSMnx](https://osmnx.readthedocs.io/en/stable/)<br>
 Routes calculated by [OneMap API](https://docs.onemap.sg/#onemap-rest-apis)<br>
 ![onemap api Preview](https://github.com/incubated-geek-cc/sg-transportation-routing/blob/main/onemap_api_Fastest_Shortest_Routes.png)
 
-**** Pre-requisites to run jupyter notebook locally
+#### Pre-requisites to run jupyter notebook locally
 * **Running:** Python 3.7.9
 * **Using:** pip 20.2.3
 * **OS:** Windows 10
