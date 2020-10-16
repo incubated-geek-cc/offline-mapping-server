@@ -1,4 +1,4 @@
-# Singapore Transportation Routing
+# Transportation Network Analysis in Singapore
 ## What this is - A network analysis done on driving in Singapore - reduce distance and time travelled via transportation routing.
 ### Comparison results of using `osmnx` python library at https://osmnx.readthedocs.io/en/stable/ and the OneMap API at https://docs.onemap.sg/#onemap-rest-apis are in this [notebook](https://github.com/incubated-geek-cc/sg-transportation-routing/blob/main/Network%20Analysis%20-%20Routing%20in%20Singapore.ipynb)
 #### Screenshots Preview
