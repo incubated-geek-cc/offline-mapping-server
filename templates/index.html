@@ -39,33 +39,12 @@
           maxZoom: 15,
           maxBoundsViscocity: 1
         });
-        var basemapLayer=L.tileLayer("static/maps/toner/{z}/{x}/{y}.png", {
+
+        var basemapLayer = L.tileLayer.mbTiles("static/maps/toner.mbtiles", {
           minZoom: 11,
           maxZoom: 15,
           maxBoundsViscocity: 1,
           errorTileUrl: "static/error.png",
-          attribution: "<span class='prefix-attribution'><em>Map tiles by <a href='http://stamen.com' target='blank'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0' target='blank'>CC BY 3.0</a>. Data by <a href='http://openstreetmap.org' target='blank'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright' target='blank'>ODbL</a>.</span>"
-        }).addTo(map);
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "static/output.geojson");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.responseType = "json";
-        xhr.onload = function() {
-            if (xhr.status !== 200) {
-              return
-            }
-            var geoJSONLayer=L.geoJSON(xhr.response);
-            map.fitBounds(geoJSONLayer.getBounds());
-            map.setMaxBounds(geoJSONLayer.getBounds());
-        };
-        xhr.send();
-        
-        
-        /*
-        var basemapLayer = L.tileLayer.mbTiles("static/maps/toner.mbtiles", {
-          minZoom: 11,
-          maxZoom: 15,
           attribution: "<span class='prefix-attribution'><em>Map tiles by <a href='http://stamen.com' target='blank'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0' target='blank'>CC BY 3.0</a>. Data by <a href='http://openstreetmap.org' target='blank'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright' target='blank'>ODbL</a>.</span>"
         }).addTo(map);
 
@@ -87,6 +66,28 @@
         basemapLayer.on("databaseerror", function(ev) {
           console.info("MBTiles DB error", ev);
         }); 
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "static/output.geojson");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.responseType = "json";
+        xhr.onload = function() {
+            if (xhr.status !== 200) {
+              return
+            }
+            var geoJSONLayer=L.geoJSON(xhr.response);
+            map.fitBounds(geoJSONLayer.getBounds());
+            map.setMaxBounds(geoJSONLayer.getBounds());
+        };
+        xhr.send();
+        /*
+        var basemapLayer=L.tileLayer("static/maps/toner/{z}/{x}/{y}.png", {
+          minZoom: 11,
+          maxZoom: 15,
+          maxBoundsViscocity: 1,
+          errorTileUrl: "static/error.png",
+          attribution: "<span class='prefix-attribution'><em>Map tiles by <a href='http://stamen.com' target='blank'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0' target='blank'>CC BY 3.0</a>. Data by <a href='http://openstreetmap.org' target='blank'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright' target='blank'>ODbL</a>.</span>"
+        }).addTo(map);
         */
     </script>
   </body>
