@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>mbtiles</title>
+    <title>{{message}}</title>
     <link rel="icon" href="static/favicon.ico">
     <link rel="stylesheet" href="static/css/leaflet.css">
     <style>
@@ -34,11 +34,17 @@
     <script src="static/js/sql.js"></script> 
     <script src="static/js/Leaflet.TileLayer.MBTiles.js"></script>   
     <script>
-        var map = new L.Map("map");
+        var map = new L.Map("map", {
+          minZoom: 11,
+          maxZoom: 15,
+          maxBoundsViscocity: 1
+        });
         var basemapLayer=L.tileLayer("static/maps/toner/{z}/{x}/{y}.png", {
           minZoom: 11,
           maxZoom: 15,
-          attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
+          maxBoundsViscocity: 1,
+          errorTileUrl: "static/error.png",
+          attribution: "<span class='prefix-attribution'><em>Map tiles by <a href='http://stamen.com' target='blank'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0' target='blank'>CC BY 3.0</a>. Data by <a href='http://openstreetmap.org' target='blank'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright' target='blank'>ODbL</a>.</span>"
         }).addTo(map);
 
         var xhr = new XMLHttpRequest();
@@ -50,16 +56,17 @@
               return
             }
             var geoJSONLayer=L.geoJSON(xhr.response);
-            map.fitBounds(geoJSONLayer.getBounds())
+            map.fitBounds(geoJSONLayer.getBounds());
+            map.setMaxBounds(geoJSONLayer.getBounds());
         };
         xhr.send();
         
         
         /*
-        var basemapLayer = L.tileLayer.mbTiles("static/maps/toner/DEFAULT.mbtiles", {
+        var basemapLayer = L.tileLayer.mbTiles("static/maps/toner.mbtiles", {
           minZoom: 11,
           maxZoom: 15,
-          attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
+          attribution: "<span class='prefix-attribution'><em>Map tiles by <a href='http://stamen.com' target='blank'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0' target='blank'>CC BY 3.0</a>. Data by <a href='http://openstreetmap.org' target='blank'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright' target='blank'>ODbL</a>.</span>"
         }).addTo(map);
 
         basemapLayer.on("databaseloaded", function(ev) {
