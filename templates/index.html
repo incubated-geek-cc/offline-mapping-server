@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>mbtiles</title>
+    <link rel="icon" href="static/favicon.ico">
+    <link rel="stylesheet" href="static/css/leaflet.css">
+    <style>
+       body {
+          padding: 0;
+          margin: 0;
+          overflow: hidden;
+          background: #ffffff;
+       }
+
+       #map {
+          background: #000000;
+          width: 100vw;
+          height: 100vh;
+       }
+
+       #loading_gif {
+           display: block;
+           margin-left: auto;
+           margin-right: auto;
+           width: 45%;
+       }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+       <img id="loading_gif" alt="Loading" src="static/loading.gif" />
+    </div>
+    <script src="static/js/leaflet.js"></script>
+    <script src="static/js/sql.js"></script> 
+    <script src="static/js/Leaflet.TileLayer.MBTiles.js"></script>   
+    <script>
+        var map = new L.Map("map");
+        var basemapLayer=L.tileLayer("static/maps/toner/{z}/{x}/{y}.png", {
+          minZoom: 11,
+          maxZoom: 15,
+          attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
+        }).addTo(map);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "static/output.geojson");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.responseType = "json";
+        xhr.onload = function() {
+            if (xhr.status !== 200) {
+              return
+            }
+            var geoJSONLayer=L.geoJSON(xhr.response);
+            map.fitBounds(geoJSONLayer.getBounds())
+        };
+        xhr.send();
+        
+        
+        /*
+        var basemapLayer = L.tileLayer.mbTiles("static/maps/toner/DEFAULT.mbtiles", {
+          minZoom: 11,
+          maxZoom: 15,
+          attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
+        }).addTo(map);
+
+        basemapLayer.on("databaseloaded", function(ev) {
+          console.info("MBTiles DB loaded", ev);
+                   
+          var popup = L.popup();
+          
+          function onMapClick(e) {
+            popup
+              .setLatLng(e.latlng)
+              .setContent("You clicked the map at " + e.latlng.toString())
+              .openOn(map);
+          }
+
+          map.on("click", onMapClick);
+        });
+
+        basemapLayer.on("databaseerror", function(ev) {
+          console.info("MBTiles DB error", ev);
+        }); 
+        */
+    </script>
+  </body>
+</html>
