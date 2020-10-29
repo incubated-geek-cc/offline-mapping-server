@@ -11,10 +11,11 @@
 
 Filename | Functionality
 ------------ | -------------
-activate_env.bat | activate virtual environment in Windows
+activate_env.bat | activate virtual environment on Windows OS
+upgrade_pip.bat | upgrades pip version in virtualenv .env
 pip_freeze.bat | output all python packages into requirements.txt file and overwrites it
 pip_install_requirements.bat | pip install all python packages based on requirements.txt file
 run_jupyterlab.bat | run jupyter lab
 run_jupyter_notebook.bat | run jupyter notebook on port 8889
 
-* Note: A virtual environment had been intiated for this project via the following command virtualenv `.env`
+* Note: A virtual environment had been initiated for this project via the following command virtualenv `.env`
