@@ -46,7 +46,7 @@
         if(useMbTiles) {
           basemapLayer = L.tileLayer.mbTiles("static/maps/" + basemapName + ".mbtiles", {
             minZoom: 11,
-            maxZoom: 17,
+            maxZoom: 15,
             attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
           }).addTo(map);
 
@@ -68,7 +68,7 @@
         } else {
           basemapLayer=L.tileLayer("static/maps/" + basemapName + "/{z}/{x}/{y}.png", {
             minZoom: 11,
-            maxZoom: 17,
+            maxZoom: 15,
             attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
           }).addTo(map);
         }
