@@ -18,4 +18,7 @@ pip_install_requirements.bat | pip install all python packages based on requirem
 run_jupyterlab.bat | run jupyter lab
 run_jupyter_notebook.bat | run jupyter notebook on port 8889
 
-* Note: A virtual environment had been initiated for this project via the following command virtualenv `.env`
+* Note: The jupyter notebook had been developed in a python virtual environment created via the command `virtualenv .env`
+
+#### Publication of Project
+Available at https://towardsdatascience.com/host-your-own-offline-mapping-server-with-jupyter-notebook-ff21b878b4d7
