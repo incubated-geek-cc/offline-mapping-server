@@ -35,37 +35,43 @@
     <script src="static/js/Leaflet.TileLayer.MBTiles.js"></script>   
     <script>
         var map = new L.Map("map", {
-          minZoom: 11,
-          maxZoom: 15,
-          maxBoundsViscocity: 1
+          maxBoundsViscosity: 1
         });
 
-        var basemapLayer = L.tileLayer.mbTiles("static/maps/toner.mbtiles", {
-          minZoom: 11,
-          maxZoom: 15,
-          maxBoundsViscocity: 1,
-          errorTileUrl: "static/error.png",
-          attribution: "<span class='prefix-attribution'><em>Map tiles by <a href='http://stamen.com' target='blank'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0' target='blank'>CC BY 3.0</a>. Data by <a href='http://openstreetmap.org' target='blank'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright' target='blank'>ODbL</a>.</span>"
-        }).addTo(map);
+        var basemapName="toner";
+        var basemapLayer=null;
 
-        basemapLayer.on("databaseloaded", function(ev) {
-          console.info("MBTiles DB loaded", ev);
-                   
-          var popup = L.popup();
-          
-          function onMapClick(e) {
-            popup
-              .setLatLng(e.latlng)
-              .setContent("You clicked the map at " + e.latlng.toString())
-              .openOn(map);
-          }
+        var useMbTiles=true;
 
-          map.on("click", onMapClick);
-        });
+        if(useMbTiles) {
+          basemapLayer = L.tileLayer.mbTiles("static/maps/" + basemapName + ".mbtiles", {
+            minZoom: 11,
+            maxZoom: 17,
+            attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
+          }).addTo(map);
 
-        basemapLayer.on("databaseerror", function(ev) {
-          console.info("MBTiles DB error", ev);
-        }); 
+          basemapLayer.on("databaseloaded", function(ev) {
+            console.info("MBTiles DB loaded", ev);
+            var popup = L.popup();
+            function onMapClick(e) {
+              popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(map);
+            }
+            map.on("click", onMapClick);
+          });
+
+          basemapLayer.on("databaseerror", function(ev) {
+            console.info("MBTiles DB error", ev);
+          }); 
+        } else {
+          basemapLayer=L.tileLayer("static/maps/" + basemapName + "/{z}/{x}/{y}.png", {
+            minZoom: 11,
+            maxZoom: 17,
+            attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
+          }).addTo(map);
+        }
 
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "static/output.geojson");
@@ -77,18 +83,9 @@
             }
             var geoJSONLayer=L.geoJSON(xhr.response);
             map.fitBounds(geoJSONLayer.getBounds());
-            map.setMaxBounds(geoJSONLayer.getBounds());
+            map.setMaxBounds(geoJSONLayer.getBounds())
         };
         xhr.send();
-        /*
-        var basemapLayer=L.tileLayer("static/maps/toner/{z}/{x}/{y}.png", {
-          minZoom: 11,
-          maxZoom: 15,
-          maxBoundsViscocity: 1,
-          errorTileUrl: "static/error.png",
-          attribution: "<span class='prefix-attribution'><em>Map tiles by <a href='http://stamen.com' target='blank'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0' target='blank'>CC BY 3.0</a>. Data by <a href='http://openstreetmap.org' target='blank'>OpenStreetMap</a>, under <a href='http://www.openstreetmap.org/copyright' target='blank'>ODbL</a>.</span>"
-        }).addTo(map);
-        */
     </script>
   </body>
 </html>
