@@ -9,11 +9,11 @@
           padding: 0;
           margin: 0;
           overflow: hidden;
-          background: #ffffff;
+          background: transparent;
        }
 
        #map {
-          background: #000000;
+          background: transparent;
           width: 100vw;
           height: 100vh;
        }
@@ -38,7 +38,7 @@
           maxBoundsViscosity: 1
         });
 
-        var basemapName="toner";
+        var basemapName="toner_hybrid";
         var basemapLayer=null;
 
         var useMbTiles=true;
@@ -52,6 +52,7 @@
 
           basemapLayer.on("databaseloaded", function(ev) {
             console.info("MBTiles DB loaded", ev);
+            document.getElementById("loading_gif")["style"]["display"]="none";
             var popup = L.popup();
             function onMapClick(e) {
               popup

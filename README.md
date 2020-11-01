@@ -11,12 +11,13 @@
 
 Filename | Functionality
 ------------ | -------------
-activate_env.bat | activate virtual environment on Windows OS
-upgrade_pip.bat | upgrades pip version in virtualenv .env
+activate_env.bat | activate virtual environment .env and upgrade pip on Windows OS
 pip_freeze.bat | output all python packages into requirements.txt file and overwrites it
 pip_install_requirements.bat | pip install all python packages based on requirements.txt file
-run_jupyterlab.bat | run jupyter lab
 run_jupyter_notebook.bat | run jupyter notebook on port 8889
+01_stream_tiles.bat | run python script stream_tileimages.py i.e. start streaming map tile images and save into local folders
+02_transform_to_mbtiles.bat | use mbutil lib to package tile image into mbtiles file
+03_run_flask_app.bat | run python script serve_web_app.py and navigate to http://localhost:9000 to view basemap
 
 * Note: The jupyter notebook had been developed in a python virtual environment created via the command `virtualenv .env`
 
