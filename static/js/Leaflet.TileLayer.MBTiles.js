@@ -148,9 +148,3 @@ Returns a new `L.TileLayer.MBTiles`, given a MBTiles database as a javascript bi
 L.tileLayer.mbTiles = function(databaseUrl, options) {
 	return new L.TileLayer.MBTiles(databaseUrl, options);
 }
-
-
-
-
-
-
