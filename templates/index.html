@@ -35,7 +35,9 @@
     <script src="static/js/Leaflet.TileLayer.MBTiles.js"></script>   
     <script>
         var map = new L.Map("map", {
-          maxBoundsViscosity: 1
+          minZoom: 11,
+          maxZoom: 15,
+          maxBoundsViscocity: 1
         });
 
         var basemapName="toner_hybrid";
@@ -47,6 +49,7 @@
           basemapLayer = L.tileLayer.mbTiles("static/maps/" + basemapName + ".mbtiles", {
             minZoom: 11,
             maxZoom: 15,
+            maxBoundsViscocity: 1,
             attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
           }).addTo(map);
 
@@ -70,6 +73,7 @@
           basemapLayer=L.tileLayer("static/maps/" + basemapName + "/{z}/{x}/{y}.png", {
             minZoom: 11,
             maxZoom: 15,
+            maxBoundsViscocity: 1,
             attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
           }).addTo(map);
         }
@@ -84,7 +88,8 @@
             }
             var geoJSONLayer=L.geoJSON(xhr.response);
             map.fitBounds(geoJSONLayer.getBounds());
-            map.setMaxBounds(geoJSONLayer.getBounds())
+            map.setMaxBounds(geoJSONLayer.getBounds());
+            document.getElementById("loading_gif")["style"]["display"]="none";
         };
         xhr.send();
     </script>

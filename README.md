@@ -15,10 +15,11 @@ activate_env.bat | activate virtual environment .env and upgrade pip on Windows 
 pip_freeze.bat | output all python packages into requirements.txt file and overwrites it
 pip_install_requirements.bat | pip install all python packages based on requirements.txt file
 run_jupyter_notebook.bat | run jupyter notebook on port 8889
-01_stream_tiles.bat | run python script stream_tileimages.py i.e. start streaming map tile images and save into local folders
-02_transform_to_mbtiles.bat | use mbutil lib to package tile image into mbtiles file
-03_run_flask_app.bat | run python script serve_web_app.py and navigate to http://localhost:9000 to view basemap
+python/scripts/01_stream_tiles.bat | run python script stream_tileimages.py i.e. start streaming map tile images and save into local folders
+transform_to_mbtiles.bat & python/scripts/02_transform_to_mbtiles.bat | use mbutil lib to package tile image into mbtiles file
+python/scripts/03_run_flask_app.bat | run python script serve_web_app.py and navigate to http://localhost:9000 to view basemap
 
+* The folder `python_scripts` runs independently of the jupyter notebook. The jupyter notebook is for first-time users and used for illustrations sake.
 * Note: The jupyter notebook had been developed in a python virtual environment created via the command `virtualenv .env`
 
 #### Publication of Project
