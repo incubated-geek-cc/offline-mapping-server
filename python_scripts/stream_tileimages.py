@@ -54,8 +54,8 @@ xy=[
   {"x":1615,"y":1014},{"x":1613,"y":1014},{"x":1616,"y":1014},{"x":1612,"y":1014},{"x":1617,"y":1014}
 ]
 
-minZoomLevel=11 # IMPORTANT! Ensure that your minZoomLevel is the same as the one you decided intially
-maxZoomLevel=15 # The upper limit of zoom level set on the basemap
+minZoomLevel=11#11 # IMPORTANT! Ensure that your minZoomLevel is the same as the one you decided intially
+maxZoomLevel=18 # The upper limit of zoom level set on the basemap
 
 directoryPrefix="toner_hybrid/" # specify folder to save to e.g. "toner_hybrid"
 
@@ -155,14 +155,18 @@ def initDirectoryStructure(n): # where n refers to the zoom level
 
 # Execute function to create folder structures for zoom levels minZoomLevel to maxZoomLevel (inclusive)
 for z in range(minZoomLevel,maxZoomLevel+1,1):
+# for z in range(16,maxZoomLevel+1,1):
     initDirectoryStructure(z)
     
-print("Folder structure for zoom levels " + str(minZoomLevel) + " to " + str(maxZoomLevel) + " has been created.")
+# print("Folder structure for zoom levels " + str(minZoomLevel) + " to " + str(maxZoomLevel) + " has been created.")
+print("Folder structure for zoom levels " + str(16) + " to " + str(maxZoomLevel) + " has been created.")
 
 # specify basemap prefix here
 basemapUrlPrefix="http://tile.stamen.com/toner-hybrid/"
 # specify basemap suffix here
 basemapUrlSuffix=".png"
+
+tile_format="XYZ"
 
 def streamTileImages(n): # where n refers to the zoom level
     minX=(minXVal/xTileDimension)*( xTileDimension/pow(2,minZoomLevel)*pow(2,n))
@@ -178,15 +182,25 @@ def streamTileImages(n): # where n refers to the zoom level
     
     for x in range(minX,maxX+1,1):
       for y in range(minY,maxY+1,1):
-            # send a HTTP request to retrieve the tile image file
-            basemapTileUrl=basemapUrlPrefix+str(n) + "/" + str(x) + "/" + str(y) + basemapUrlSuffix
-            r = requests.get(basemapTileUrl)
-            # proceed to save it as a local image file in the folders created in step 3
-            save_as_filename=directoryPrefix+str(n) + "/" + str(x) + "/" + str(y) + ".png"
-            with open(save_as_filename,"wb") as local_tile_image:
-                local_tile_image.write(r.content) 
+            basemapTileUrl=""
+
+            if tile_format=="XYZ":
+              basemapTileUrl=basemapUrlPrefix+str(n) + "/" + str(x) + "/" + str(y) + basemapUrlSuffix
+            elif tile_format=="YXZ":
+              basemapTileUrl=basemapUrlPrefix+str(n) + "/" + str(y) + "/" + str(x) + basemapUrlSuffix
+
+            try:
+              # send a HTTP request to retrieve the tile image file
+              r = requests.get(basemapTileUrl)
+              # proceed to save it as a local image file in the folders created in step 3
+              save_as_filename=directoryPrefix+str(n) + "/" + str(x) + "/" + str(y) + ".png"
+              with open(save_as_filename,"wb") as local_tile_image:
+                  local_tile_image.write(r.content)
+            except:
+              print(basemapTileUrl)
 
 for z in range(minZoomLevel,maxZoomLevel+1,1):
+# for z in range(16,maxZoomLevel+1,1):
     streamTileImages(z)
     
-print("All map tile images for zoom levels " + str(minZoomLevel) + " to " + str(maxZoomLevel) + " have been saved to local directories.")
+print("All map tile images for zoom levels " + str(16) + " to " + str(maxZoomLevel) + " have been saved to local directories.")
