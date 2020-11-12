@@ -5,25 +5,49 @@
     <link rel="icon" href="static/favicon.ico">
     <link rel="stylesheet" href="static/css/leaflet.css">
     <style>
-       body {
+        body {
           padding: 0;
           margin: 0;
           overflow: hidden;
           background: transparent;
-       }
+        }
 
-       #map {
+        .btn {
+          background-color: #278aff;
+          border: none;
+          color: white;
+          padding: 5px 10px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 15px;
+          margin: 2px 0;
+          cursor: pointer;
+          border-radius:50%;;
+        }
+        .btn:hover {
+          background-color:#56a4ff;
+        }
+        #map {
           background: transparent;
           width: 100vw;
           height: 100vh;
-       }
+        }
 
-       #loading_gif {
-           display: block;
-           margin-left: auto;
-           margin-right: auto;
-           width: 45%;
-       }
+        #loading_gif {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 45%;
+        }
+
+        input[type=range][orient=vertical] {
+          writing-mode: bt-lr; /* IE */
+          -webkit-appearance: slider-vertical; /* WebKit */
+          width: 8px;
+          height: 175px;
+          padding: 0 5px;
+        }
     </style>
   </head>
   <body>
@@ -34,64 +58,187 @@
     <script src="static/js/sql.js"></script> 
     <script src="static/js/Leaflet.TileLayer.MBTiles.js"></script>   
     <script>
-        var map = new L.Map("map", {
-          minZoom: 11,
-          maxZoom: 15,
-          maxBoundsViscocity: 1
-        });
-
-        var basemapName="toner_hybrid";
+        var minZoom=11;
+        var maxZoom=14;
+        var useMbTiles=true;
         var basemapLayer=null;
 
-        var useMbTiles=true;
+        var basemapOptions={
+          minZoom: minZoom,
+          maxZoom: maxZoom,
+          zoomControl: false,
+          maxBoundsViscosity: 1,
+          bounceAtZoomLimits: false,
+          attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
+        };
+        var basemapNames={
+          "toner":"Toner"
+        };
+        var currentBasemapName="toner";
 
-        if(useMbTiles) {
-          basemapLayer = L.tileLayer.mbTiles("static/maps/" + basemapName + ".mbtiles", {
-            minZoom: 11,
-            maxZoom: 15,
-            maxBoundsViscocity: 1,
-            attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
-          }).addTo(map);
+        var map = new L.Map("map", {
+          minZoom: minZoom,
+          maxZoom: maxZoom,
+          zoomControl: false,
+          maxBoundsViscosity: 1,
+          bounceAtZoomLimits: false
+        });
 
+        L.control.scale({
+          position: "bottomleft"
+        }).addTo(map);
+
+        var zoomControl = L.control({
+          position: "topleft"
+        });
+        zoomControl.onAdd = function(map) {
+          let div = L.DomUtil.create("div", "zoomControl");
+          let htmlStr = "";
+          htmlStr += "<div class='leaflet-control-layers leaflet-control leaflet-control-layers-expanded' style='opacity:0.85'>";
+
+          htmlStr += "<table style='text-align:center'>";
+          htmlStr += "<tr><th>"+maxZoom+"</th></tr>";
+          htmlStr += "<tr><th><button id='zoomIn' class='btn'>+</button></th></tr>";
+          htmlStr += "<tr><td><input id='zoom' type='range' orient='vertical' value='"+(minZoom+1)+"' name='zoom' min='"+minZoom+"' max='"+maxZoom+"' /></td></tr>";
+
+          htmlStr += "<tr><th><button id='zoomOut' class='btn'>−</button></th></tr>";
+          htmlStr += "<tr><th>"+minZoom+"</th></tr>";
+          htmlStr += "</table>";
+
+          htmlStr += "</div>";
+          div.innerHTML = htmlStr;
+          return div;
+        };
+        zoomControl.addTo(map);
+        zoomControl.getContainer().addEventListener("mouseover", function () {
+            map.dragging.disable();
+            map.doubleClickZoom.disable(); 
+            map.scrollWheelZoom.disable();
+            map.touchZoom.disable();
+        });
+        zoomControl.getContainer().addEventListener("mouseout", function () {
+            map.dragging.enable();
+            map.doubleClickZoom.enable(); 
+            map.scrollWheelZoom.enable();
+            map.touchZoom.enable();
+        });
+        document.getElementById("zoom").oninput = function(e) {
+          let latestZoomLevel=parseInt(e.target.value);
+          map.setZoom(latestZoomLevel);
+        };
+        document.getElementById("zoomIn").onclick = function(e) {
+          let currentZoom=map.getZoom();
+          if(currentZoom<maxZoom) {
+            map.setZoom(currentZoom+1);
+            document.getElementById("zoom").value=currentZoom+1;
+          }
+        };
+        document.getElementById("zoomOut").onclick = function(e) {
+          let currentZoom=map.getZoom();
+          if(currentZoom>minZoom) {
+            map.setZoom(currentZoom-1);
+            document.getElementById("zoom").value=currentZoom-1;
+          }
+        };
+        
+
+        var command = L.control({
+          position: "topright"
+        });
+        command.onAdd = function(map) {
+          let div = L.DomUtil.create("div", "command");
+          let htmlStr = "";
+          htmlStr += "<div class='leaflet-control-layers leaflet-control leaflet-control-layers-expanded' style='width:150px;opacity:0.85'>";
+          htmlStr += "<div class='leaflet-control-layers-base'>";
+          htmlStr += "<div class='leaflet-control-layers-overlays'>";
+          htmlStr += "<b>Basemap Options</b>";
+          htmlStr += "</div>";
+          htmlStr += "<table style='text-align:left'>";
+          for(var b in basemapNames) {
+            if(b==currentBasemapName) {
+              htmlStr += "<tr><td>"+basemapNames[b]+"</td><td><input class='basemapName' type='radio' checked name='basemapName' value='"+b+"' /></td></tr>";
+            } else {
+              htmlStr += "<tr><td>"+basemapNames[b]+"</td><td><input class='basemapName' type='radio' name='basemapName' value='"+b+"' /></td></tr>";
+            }
+          }
+          htmlStr += "</table>";
+          htmlStr += "</div>";
+          htmlStr += "</div>";
+          div.innerHTML = htmlStr; 
+          return div;
+        }; 
+        command.addTo(map);
+        command.getContainer().addEventListener("mouseover", function () {
+            map.dragging.disable();
+            map.doubleClickZoom.disable(); 
+            map.scrollWheelZoom.disable();
+            map.touchZoom.disable();
+        });
+        command.getContainer().addEventListener("mouseout", function () {
+            map.dragging.enable();
+            map.doubleClickZoom.enable(); 
+            map.scrollWheelZoom.enable();
+            map.touchZoom.enable();
+        });
+
+
+        function setBasemap(basemap) {
+          document.getElementById("loading_gif")["style"]["display"]="block";
+          if(basemapLayer!==null) {
+            basemapLayer.removeFrom(map);
+          }
+          basemapLayer = L.tileLayer.mbTiles("static/maps/"+basemap+".mbtiles", basemapOptions).addTo(map);
           basemapLayer.on("databaseloaded", function(ev) {
             console.info("MBTiles DB loaded", ev);
-            document.getElementById("loading_gif")["style"]["display"]="none";
-            var popup = L.popup();
-            function onMapClick(e) {
-              popup
-                .setLatLng(e.latlng)
-                .setContent("You clicked the map at " + e.latlng.toString())
-                .openOn(map);
-            }
-            map.on("click", onMapClick);
           });
 
           basemapLayer.on("databaseerror", function(ev) {
             console.info("MBTiles DB error", ev);
           }); 
-        } else {
-          basemapLayer=L.tileLayer("static/maps/" + basemapName + "/{z}/{x}/{y}.png", {
-            minZoom: 11,
-            maxZoom: 15,
-            maxBoundsViscocity: 1,
-            attribution: "<span class='prefix-attribution'><a href='https://www.onemap.sg/home/'><img src='static/onemap.png' style='height:15px;width:15px;' alt='onemap logo' /></a> New OneMap | Map data © contributors, <a href='http://SLA.gov.sg'>SLA</a></span>"
-          }).addTo(map);
+        }
+        function setMapBounds(basemap) {
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", "static/maps/"+basemap+"_output.geojson");
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.responseType = "json";
+          xhr.onload = function() {
+              if (xhr.status !== 200) {
+                return;
+              }
+              var geoJSONLayer=L.geoJSON(xhr.response);
+              map.fitBounds(geoJSONLayer.getBounds());
+              map.setMaxBounds(geoJSONLayer.getBounds());
+              map.setZoom(minZoom+1);
+              document.getElementById("loading_gif")["style"]["display"]="none";
+          };
+          xhr.send();
         }
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "static/output.geojson");
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.responseType = "json";
-        xhr.onload = function() {
-            if (xhr.status !== 200) {
-              return
+
+        var basemapNames=document.getElementsByClassName("basemapName");
+        for(var b in basemapNames) {
+          basemapNames[b].onchange = function(e) {
+            let basemapName=e.target.value;
+            
+            if(basemapName !== currentBasemapName) {
+              if(useMbTiles) {
+                setBasemap(basemapName);
+              } else {
+                basemapLayer.setUrl("static/maps/"+basemapName+"/{z}/{x}/{y}.png");
+              }
+              setMapBounds(basemapName);
             }
-            var geoJSONLayer=L.geoJSON(xhr.response);
-            map.fitBounds(geoJSONLayer.getBounds());
-            map.setMaxBounds(geoJSONLayer.getBounds());
-            document.getElementById("loading_gif")["style"]["display"]="none";
-        };
-        xhr.send();
+            currentBasemapName=basemapName;
+          };// on basemap change
+        } // end for-loop
+
+        // Initialisation
+        if(useMbTiles) {
+          setBasemap(currentBasemapName);
+        } else {
+          basemapLayer=L.tileLayer("static/maps/"+currentBasemapName+"/{z}/{x}/{y}.png", basemapOptions).addTo(map);
+        }
+        setMapBounds(currentBasemapName);
     </script>
   </body>
 </html>

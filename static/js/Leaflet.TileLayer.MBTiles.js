@@ -15,7 +15,6 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 
 
 	initialize: function(databaseUrl, options) {
-
 		this._databaseIsLoaded = false;
 		if (typeof databaseUrl === 'string') {
 			fetch(databaseUrl).then(response => {
@@ -30,7 +29,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		} else {
 			this.fire('databaseerror');
 		}
-
+		
 		return L.TileLayer.prototype.initialize.call(this, '', options);
 	},
 
